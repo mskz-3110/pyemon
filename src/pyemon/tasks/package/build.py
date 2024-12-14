@@ -1,0 +1,12 @@
+from ...command import *
+from ...task import *
+import shutil
+import glob
+
+class PackageBuildTask(Task):
+  def run(self, argv):
+    for pattern in ["dist", "**/*.egg-info"]:
+      for path in glob.glob(pattern, recursive = True):
+        shutil.rmtree(path)
+    Command(["python", "-m", "build"] + argv).run()
+Task.parse_if_main(__name__, Task.set(PackageBuildTask()))
