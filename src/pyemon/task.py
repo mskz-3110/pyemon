@@ -104,4 +104,4 @@ class HelpTask(Task):
             print("")
     else:
       Task.parse(argv)
-Task.parse_if_main(__name__, HelpTask("<task names>"))
+Task.set(HelpTask("<task names>"))
