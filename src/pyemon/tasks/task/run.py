@@ -5,14 +5,15 @@ import importlib
 
 class TaskRunTask(Task):
   def run(self, argv):
+    builtinTaskNames = list(map(lambda task: task.Name, Task.tasks()))
     sys.path.append(os.getcwd())
     tasks = {}
     for path in glob.glob("**/pyetask.py", recursive = True):
       names = Directory.split(path)
       names[-1] = os.path.splitext(names[-1])[0]
       for task in importlib.import_module(".".join(names)).Task.tasks():
-        tasks[task.Name] = task
-        Task.set(task)
+        if task.Name not in builtinTaskNames:
+          tasks[task.Name] = task
     if len(argv) == 0:
       print("<Tasks>")
       for task in tasks.values():

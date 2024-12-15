@@ -42,6 +42,12 @@ class Task:
     return task
 
   @classmethod
+  def unset(cls, name):
+    if name in Task.__Tasks:
+      return Task.__Tasks.pop(name)
+    return None
+
+  @classmethod
   def get(cls, name):
     if name in Task.__Tasks:
       return Task.__Tasks[name]
@@ -58,7 +64,9 @@ class Task:
       newArgv = copy.deepcopy(argv)
       name = List.shift(newArgv)
       if name in Task.__Tasks:
-        Task.__Tasks[name].run(newArgv)
+        task = Task.unset(name)
+        task.run(newArgv)
+        Task.set(task)
       else:
         sys.exit(Task.to_undefined_string(name))
 
@@ -66,7 +74,7 @@ class Task:
   def parse_if_main(cls, name, task = None):
     if task is not None:
       Task.set(task)
-    if name == "__main__" or name == "pyemon.cli":
+    if name == "__main__" or name.split(".")[-1] == "cli":
       argv = copy.deepcopy(sys.argv[1:])
       if task is not None:
         argv.insert(0, task.Name)
@@ -80,7 +88,7 @@ class HelpTask(Task):
   def run(self, argv):
     if len(argv) == 0:
       strings = ["<Tasks>"]
-      for task in Task.tasks():
+      for task in [self] + list(Task.tasks()):
         strings.append(task.to_string("  "))
         strings.append("")
       sys.exit("\n".join(strings))
@@ -90,8 +98,7 @@ class HelpTask(Task):
       if len(newArgv) == 0:
         taskNames = []
         for task in Task.tasks():
-          if task.Name != "help":
-            taskNames.append(task.Name)
+          taskNames.append(task.Name)
         print("""{}""".format(" ".join(taskNames)))
       else:
         print("<Tasks>")
