@@ -19,7 +19,7 @@ Make your python work easier
 
 |Version|Summary|
 |:--|:--|
-|0.1.0|Release pyemon|
+|0.1.1|Release pyemon|
 
 ## Installation
 ### [pyemon](https://pypi.org/project/pyemon/)

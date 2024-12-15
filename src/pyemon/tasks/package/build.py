@@ -7,5 +7,5 @@ class PackageBuildTask(Task):
     for pattern in ["dist", "**/*.egg-info"]:
       for path in glob.glob(pattern, recursive = True):
         shutil.rmtree(path)
-    Command(["python", "-m", "build"] + argv).run()
+    Command(["pipenv", "run", "python", "-m", "build"] + argv).run()
 Task.parse_if_main(__name__, PackageBuildTask("<build args>"))

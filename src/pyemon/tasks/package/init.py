@@ -102,6 +102,6 @@ testpaths = ["tests"]
       Command(["pipenv", "--python", str(sys.version_info[0])]).run()
       Command(["pipenv", "install", "--dev", "pytest"]).run()
 
-    Command(["pip", "install", "build"]).run()
-    Command(["pip", "install", "twine"]).run()
+    Command(["pipenv", "install", "--dev", "build"]).run()
+    Command(["pipenv", "install", "--dev", "twine"]).run()
 Task.parse_if_main(__name__, PackageInitTask())
