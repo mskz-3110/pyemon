@@ -1,33 +1,40 @@
 from .option import *
 from .command import *
+import sys
 import inflection
+import copy
 
 class Task:
   __Tasks = {}
 
-  def __init__(self, optionParser = None):
+  def __init__(self, caption = ""):
     name = inflection.underscore(self.__class__.__name__)
     if name.endswith("_task"):
       name = name[:-5]
     self.__Name = name.replace("_", ".")
-    if optionParser is None:
-      optionParser = OptionParser()
-    self.OptionParser = optionParser
+    self.Caption = caption
+    self.OptionParser = OptionParser()
 
   @property
   def Name(self):
     return self.__Name
 
   def run(self, argv):
-    None
+    pass
 
   def to_string(self, indent = ""):
     strings = []
-    strings.append("""{}{}""".format(indent, self.__Name))
+    if len(self.Caption) == 0:
+      strings.append("""{}{}""".format(indent, self.__Name))
+    else:
+      strings.append("""{}{} # {}""".format(indent, self.__Name, self.Caption))
     string = self.OptionParser.to_string("""{}  """.format(indent))
     if 0 < len(string):
       strings.append(string)
     return "\n".join(strings)
+
+  def __str__(self):
+    return self.to_string()
 
   @classmethod
   def set(cls, task):
@@ -46,20 +53,24 @@ class Task:
     return tuple(Task.__Tasks.values())
 
   @classmethod
-  def parse(cls, argv = None):
-    if argv is None:
-      argv = sys.argv[1:]
+  def parse(cls, argv):
     if 0 < len(argv):
-      name = argv[0]
+      newArgv = copy.deepcopy(argv)
+      name = List.shift(newArgv)
       if name in Task.__Tasks:
-        Task.__Tasks[name].run(argv[1:])
+        Task.__Tasks[name].run(newArgv)
       else:
         sys.exit(Task.to_undefined_string(name))
 
   @classmethod
-  def parse_if_main(cls, name, task):
+  def parse_if_main(cls, name, task = None):
+    if task is not None:
+      Task.set(task)
     if name == "__main__" or name == "pyemon.cli":
-      Task.parse([task.Name] + sys.argv[1:])
+      argv = copy.deepcopy(sys.argv[1:])
+      if task is not None:
+        argv.insert(0, task.Name)
+      Task.parse(argv)
 
   @classmethod
   def to_undefined_string(self, name):

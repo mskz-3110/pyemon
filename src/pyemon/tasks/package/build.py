@@ -1,4 +1,3 @@
-from ...command import *
 from ...task import *
 import shutil
 import glob
@@ -9,4 +8,4 @@ class PackageBuildTask(Task):
       for path in glob.glob(pattern, recursive = True):
         shutil.rmtree(path)
     Command(["python", "-m", "build"] + argv).run()
-Task.parse_if_main(__name__, Task.set(PackageBuildTask()))
+Task.parse_if_main(__name__, PackageBuildTask("<build args>"))

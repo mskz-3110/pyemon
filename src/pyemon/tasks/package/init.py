@@ -1,18 +1,15 @@
-import os
-import sys
-from ...option import *
-from ...command import *
 from ...task import *
-from ...file import *
+from ...status import *
 
 class PackageInitTask(Task):
-  def __init__(self):
-    super().__init__(OptionParser([
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.OptionParser = OptionParser([
       Option("u", "user-name", "{USERNAME}", "User name"),
       Option("e", "email", "{EMAIL}", "Email"),
       Option("description", "description", "{DESCRIPTION}", "Description"),
       Option("p", "project-name", "", "Project name")
-    ]))
+    ])
 
   def run(self, argv):
     self.OptionParser.parse(argv)
@@ -28,21 +25,21 @@ class PackageInitTask(Task):
         file.write("*.egg-info\n")
         file.write("__pycache__\n")
         fileStatus.done()
-    fileStatus.print()
+    print(fileStatus)
 
     fileStatus = FileStatus("MANIFEST.in")
     if not fileStatus.exists():
       with open(fileStatus.Path, "w", newline = "\n") as file:
         file.write("recursive-exclude tests *.py\n")
         fileStatus.done()
-    fileStatus.print()
+    print(fileStatus)
 
     fileStatus = FileStatus("README.md")
     if not fileStatus.exists():
       with open(fileStatus.Path, "w", newline = "\n") as file:
         file.write("""# {}\n""".format(projectName))
         fileStatus.done()
-    fileStatus.print()
+    print(fileStatus)
 
     fileStatus = FileStatus("setup.py")
     if not fileStatus.exists():
@@ -50,7 +47,7 @@ class PackageInitTask(Task):
         file.write("from setuptools import setup\n")
         file.write("setup()\n")
         fileStatus.done()
-    fileStatus.print()
+    print(fileStatus)
 
     directoryPath = """src/{}""".format(projectName)
     os.makedirs(directoryPath, exist_ok = True)
@@ -63,7 +60,7 @@ class PackageInitTask(Task):
         file.write("""def test_{}():\n""".format(projectName))
         file.write("""  print("TODO: test_{}()")\n""".format(projectName))
         fileStatus.done()
-    fileStatus.print()
+    print(fileStatus)
 
     fileStatus = FileStatus("pyproject.toml")
     if not fileStatus.exists():
@@ -99,7 +96,7 @@ testpaths = ["tests"]
 
 """.format(userName = userName, email = email, description = description, projectName = projectName))
         fileStatus.done()
-    fileStatus.print()
+    print(fileStatus)
 
     if not os.path.isfile("Pipfile"):
       Command(["pipenv", "--python", str(sys.version_info[0])]).run()
@@ -107,4 +104,4 @@ testpaths = ["tests"]
 
     Command(["pip", "install", "build"]).run()
     Command(["pip", "install", "twine"]).run()
-Task.parse_if_main(__name__, Task.set(PackageInitTask()))
+Task.parse_if_main(__name__, PackageInitTask())

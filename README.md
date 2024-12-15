@@ -10,6 +10,7 @@ Make your python work easier
 3. Testing the package
 4. Building the package
 5. Uploading the package
+6. Execute your own defined tasks
 
 ## Reason for development
 - I want to easily create my own packages
@@ -28,7 +29,7 @@ Make your python work easier
 ### package.init
 Initialization work required to create your own package
 
-`pyemon package.init`
+`pyemon package.init -u USERNAME -e EMAIL -d DESCRIPTION`
 ```
 [With value]
   -u|--user-name    {USERNAME}    # User name
@@ -40,7 +41,7 @@ Initialization work required to create your own package
 ### package.install
 Installing the package
 
-`pyemon package.install`
+`pyemon package.install -d pytest`
 ```
 [No value]
   -p|--pip   # PIP
@@ -65,4 +66,57 @@ Uploading the package
 ```
 [No value]
   -p|--pypi  # PYPI
+```
+
+## Task
+### 1. Prepare pyetask.py file
+**[pyetask.py]**
+```python
+from pyemon.task import *
+
+class CamelizeTask(Task):
+  def run(self, argv):
+    for arg in argv:
+      print(inflection.camelize(arg))
+Task.set(CamelizeTask("<words>"))
+
+class UnderscoreTask(Task):
+  def run(self, argv):
+    for arg in argv:
+      print(inflection.underscore(arg))
+Task.set(UnderscoreTask("<words>"))
+
+class SingularizeTask(Task):
+  def run(self, argv):
+    for arg in argv:
+      print(inflection.singularize(arg))
+Task.set(SingularizeTask("<words>"))
+
+class PluralizeTask(Task):
+  def run(self, argv):
+    for arg in argv:
+      print(inflection.pluralize(arg))
+Task.set(PluralizeTask("<words>"))
+```
+
+### 2. Execute tasks with CLI execution
+
+`pyemon task.run camelize device_type`
+```
+DeviceType
+```
+
+`pyemon task.run underscore DeviceType`
+```
+device_type
+```
+
+`pyemon task.run singularize posts`
+```
+post
+```
+
+`pyemon task.run pluralize post`
+```
+posts
 ```

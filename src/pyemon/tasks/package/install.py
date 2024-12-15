@@ -1,14 +1,13 @@
-from ...option import *
-from ...command import *
 from ...task import *
 
 class PackageInstallTask(Task):
-  def __init__(self):
-    super().__init__(OptionParser([
+  def __init__(self, *args, **kwargs):
+    super().__init__(*args, **kwargs)
+    self.OptionParser = OptionParser([
       Option("p", "pip", None, "PIP"),
       Option("d", "dev", None, "Development"),
       Option("t", "test", None, "TestPYPI"),
-    ]))
+    ])
 
   def run(self, argv):
     self.OptionParser.parse(argv)
@@ -21,4 +20,4 @@ class PackageInstallTask(Task):
     if self.OptionParser.find_option_from_long_name("test").Value:
       args.append("-i https://test.pypi.org/simple/")
     Command(args + self.OptionParser.Argv).run()
-Task.parse_if_main(__name__, Task.set(PackageInstallTask()))
+Task.parse_if_main(__name__, PackageInstallTask("<pip(pipenv) install args>"))

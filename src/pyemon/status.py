@@ -14,5 +14,8 @@ class FileStatus:
   def done(self):
     self.Status = "done"
 
-  def print(self):
-    print("""\033[40m\033[36m{}\033[0m is {}.""".format(self.Path, self.Status))
+  def to_string(self):
+    return """\033[40m\033[36m{}\033[0m is {}.""".format(self.Path, self.Status)
+
+  def __str__(self):
+    return self.to_string()

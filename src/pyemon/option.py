@@ -1,5 +1,3 @@
-import sys
-import copy
 from .list import *
 
 class Option:
@@ -57,34 +55,42 @@ class OptionParser:
   def parse(self, argv):
     argc = len(argv)
     argi = 0
-    oldArgv = ListHelper(copy.deepcopy(argv))
     newArgv = []
+    parsedOptions = []
     while argi < argc:
-      arg = oldArgv.get(argi)
+      arg = List.get(argv, argi)
       if 2 <= len(arg):
         if arg[0] == "-":
           if arg[1] == "-":
             splitedArg = arg[2:].split("=")
             option = self.find_option_from_long_name(splitedArg[0])
+            if option is not None and option in parsedOptions:
+              option = None
             if option is None:
               newArgv.append(arg)
-            elif option.DefaultValue is None:
-              option.Value = True
-            elif len(splitedArg) == 1:
-              argi += 1
-              option.Value = oldArgv.get(argi)
             else:
-              splitedArg.pop(0)
-              option.Value = "=".join(splitedArg)
+              parsedOptions.append(option)
+              if option.DefaultValue is None:
+                option.Value = True
+              elif len(splitedArg) == 1:
+                argi += 1
+                option.Value = List.get(argv, argi)
+              else:
+                splitedArg.pop(0)
+                option.Value = "=".join(splitedArg)
           else:
             option = self.find_option_from_short_name(arg[1:])
+            if option is not None and option in parsedOptions:
+              option = None
             if option is None:
               newArgv.append(arg)
-            elif option.DefaultValue is None:
-              option.Value = True
             else:
-              argi += 1
-              option.Value = oldArgv.get(argi)
+              parsedOptions.append(option)
+              if option.DefaultValue is None:
+                option.Value = True
+              else:
+                argi += 1
+                option.Value = List.get(argv, argi)
         else:
           newArgv.append(arg)
       else:
@@ -121,3 +127,6 @@ class OptionParser:
       for option in noValueOptions:
         strings.append(format.format(option.ShortName, option.LongName, "", option.Caption))
     return "\n".join(strings)
+
+  def __str__(self):
+    return self.to_string()
