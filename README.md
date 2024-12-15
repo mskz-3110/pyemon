@@ -41,7 +41,7 @@ Initialization work required to create your own package
 ### package.install
 Installing the package
 
-`pyemon package.install -d pytest`
+`pyemon package.install`
 ```
 [No value]
   -p|--pip   # PIP
@@ -68,8 +68,12 @@ Uploading the package
   -p|--pypi  # PYPI
 ```
 
-## Task
-### 1. Prepare pyetask.py file
+### task.run
+Executing a task
+
+`pyemon task.run`
+
+#### 1. Prepare pyetask.py file
 **[pyetask.py]**
 ```python
 from pyemon.task import *
@@ -99,7 +103,7 @@ class PluralizeTask(Task):
 Task.set(PluralizeTask("<words>"))
 ```
 
-### 2. Execute tasks with CLI execution
+#### 2. Execute tasks with CLI execution
 
 `pyemon task.run camelize device_type`
 ```
