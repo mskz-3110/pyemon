@@ -1,7 +1,7 @@
 import os
 
 class Path:
-  def __init__(self, directory = ".", file = "", ext = ""):
+  def __init__(self, directory = "", file = "", ext = ""):
     self.Directory = directory
     self.File = file
     self.Ext = ext
@@ -10,7 +10,8 @@ class Path:
     return os.path.exists(self.to_string())
 
   def makedirs(self):
-    os.makedirs(self.Directory, exist_ok = True)
+    if 0 < len(self.Directory):
+      os.makedirs(self.Directory, exist_ok = True)
 
   def to_string(self):
     return Path.join(self.File, self.Ext, self.Directory)
