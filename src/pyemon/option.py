@@ -36,20 +36,23 @@ class Option:
 
 class OptionParser:
   def __init__(self, options = []):
-    self.Options = {}
+    self.__Options = {}
     for option in options:
-      self.Options[option.LongName] = option
+      self.add_option(option)
     self.Argv = []
 
+  def add_option(self, option):
+    self.__Options[option.LongName] = option
+
   def find_option_from_short_name(self, shortName):
-    for option in self.Options.values():
+    for option in self.__Options.values():
       if option.ShortName == shortName:
         return option
     return None
 
   def find_option_from_long_name(self, longName):
-    if longName in self.Options:
-      return self.Options[longName]
+    if longName in self.__Options:
+      return self.__Options[longName]
     return None
 
   def parse(self, argv):
@@ -105,7 +108,7 @@ class OptionParser:
     noValueOptions = []
     longNameMaxLen = 0
     defaultValueMaxLen = 0
-    for option in self.Options.values():
+    for option in self.__Options.values():
       longNameMaxLen = max(len(option.LongName), longNameMaxLen)
       defaultValue = option.DefaultValue
       if defaultValue is None:

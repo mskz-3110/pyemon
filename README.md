@@ -31,48 +31,60 @@ Make your python work easier
 ### package.init
 Initialization work required to create your own package
 
+```
+package.init
+  [With value]
+    -u|--user-name    {USERNAME}    # User name
+    -e|--email        {EMAIL}       # Email
+    -d|--description  {DESCRIPTION} # Description
+    -p|--project-name               # Project name
+```
 `pyemon package.init -u USERNAME -e EMAIL -d DESCRIPTION`
-```
-[With value]
-  -u|--user-name    {USERNAME}    # User name
-  -e|--email        {EMAIL}       # Email
-  -d|--description  {DESCRIPTION} # Description
-  -p|--project-name               # Project name
-```
 
 ### package.install
 Installing the package
 
+```
+package.install # <pip(pipenv) install args>
+  [No value]
+    -p|--pip   # PIP
+    -d|--dev   # Development
+    -t|--test  # TestPYPI
+```
 `pyemon package.install`
-```
-[No value]
-  -p|--pip   # PIP
-  -d|--dev   # Development
-  -t|--test  # TestPYPI
-```
 
 ### package.test
 Testing the package
 
+```
+package.test # <pytest args>
+```
 `pyemon package.test`
 
 ### package.build
 Building the package
 
+```
+package.build # <build args>
+```
 `pyemon package.build`
 
 ### package.upload
 Uploading the package
 
+```
+package.upload # <twine upload args>
+  [No value]
+    -p|--pypi  # PYPI
+```
 `pyemon package.upload`
-```
-[No value]
-  -p|--pypi  # PYPI
-```
 
 ### task.run
 Executing a task
 
+```
+task.run # <task name> <task args>
+```
 `pyemon task.run`
 
 #### 1. Prepare pyetask.py file
@@ -107,21 +119,33 @@ Task.set(PluralizeTask("<words>"))
 
 #### 2. Execute tasks with CLI execution
 
+```
+camelize # <words>
+```
 `pyemon task.run camelize device_type`
 ```
 DeviceType
 ```
 
+```
+underscore # <words>
+```
 `pyemon task.run underscore DeviceType`
 ```
 device_type
 ```
 
+```
+singularize # <words>
+```
 `pyemon task.run singularize posts`
 ```
 post
 ```
 
+```
+pluralize # <words>
+```
 `pyemon task.run pluralize post`
 ```
 posts

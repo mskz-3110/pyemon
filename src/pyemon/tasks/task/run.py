@@ -26,4 +26,4 @@ class TaskRunTask(Task):
         tasks[name].run(argv)
       else:
         sys.exit(String.to_undefined_string(name))
-Task.parse_if_main(__name__, TaskRunTask("<task args>"))
+Task.parse_if_main(__name__, TaskRunTask("<task name> <task args>"))
