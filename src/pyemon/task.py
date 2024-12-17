@@ -1,5 +1,6 @@
 from .option import *
 from .command import *
+from .string import *
 import sys
 import inflection
 import copy
@@ -68,7 +69,7 @@ class Task:
         task.run(newArgv)
         Task.set(task)
       else:
-        sys.exit(Task.to_undefined_string(name))
+        sys.exit(String.to_undefined_string(name))
 
   @classmethod
   def parse_if_main(cls, name, task = None):
@@ -80,10 +81,6 @@ class Task:
         argv.insert(0, task.Name)
       Task.parse(argv)
 
-  @classmethod
-  def to_undefined_string(self, name):
-    return """{} task is undefined.""".format(Command.to_error_string(name))
-
 class HelpTask(Task):
   def run(self, argv):
     if len(argv) == 0:
@@ -93,22 +90,20 @@ class HelpTask(Task):
         strings.append("")
       sys.exit("\n".join(strings))
     if argv[0] == "help":
-      newArgv = copy.deepcopy(argv)
-      newArgv.pop(0)
-      if len(newArgv) == 0:
-        taskNames = []
-        for task in Task.tasks():
-          taskNames.append(task.Name)
-        print("""{}""".format(" ".join(taskNames)))
+      argv.pop(0)
+      strings = []
+      if len(argv) == 0:
+        strings.append("""{}""".format(" ".join(list(map(lambda task: task.Name, Task.tasks())))))
       else:
-        print("<Tasks>")
-        for name in newArgv:
+        strings.append("<Tasks>")
+        for name in argv:
           task = Task.get(name)
           if task is None:
-            sys.exit(Task.to_undefined_string(name))
+            strings.append("""  {}""".format(String.to_undefined_string(name)))
           else:
-            print(task.to_string("  "))
-            print("")
+            strings.append(task.to_string("  "))
+          strings.append("")
+      sys.exit("\n".join(strings))
     else:
       Task.parse(argv)
 Task.set(HelpTask("<task names>"))

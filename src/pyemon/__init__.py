@@ -4,5 +4,6 @@ from .list import *
 from .option import *
 from .path import *
 from .status import *
+from .string import *
 from .task import *
 from .time import *

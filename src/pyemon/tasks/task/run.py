@@ -15,15 +15,15 @@ class TaskRunTask(Task):
         if task.Name not in builtinTaskNames:
           tasks[task.Name] = task
     if len(argv) == 0:
-      print("<Tasks>")
+      strings = ["<Tasks>"]
       for task in tasks.values():
-        print(task.to_string("  "))
-        print("")
+        strings.append(task.to_string("  "))
+        strings.append("")
+      sys.exit("\n".join(strings))
     else:
-      newArgv = copy.deepcopy(argv)
-      name = List.shift(newArgv)
+      name = List.shift(argv)
       if name in tasks:
-        tasks[name].run(newArgv)
+        tasks[name].run(argv)
       else:
-        sys.exit(Task.to_undefined_string(name))
+        sys.exit(String.to_undefined_string(name))
 Task.parse_if_main(__name__, TaskRunTask("<task args>"))

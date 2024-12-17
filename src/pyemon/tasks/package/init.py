@@ -38,6 +38,8 @@ class PackageInitTask(Task):
     if not fileStatus.exists():
       with open(fileStatus.Path, "w", newline = "\n") as file:
         file.write("""# {}\n""".format(projectName))
+        if description is not "{DESCRIPTION}":
+          file.write("""{}\n""".format(description))
         fileStatus.done()
     print(fileStatus)
 
