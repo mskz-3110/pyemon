@@ -95,7 +95,6 @@ Issues = "https://github.com/{userName}/{projectName}/issues"
 [tool.pytest.ini_options]
 pythonpath = "src"
 testpaths = ["tests"]
-
 """.format(userName = userName, email = email, description = description, projectName = projectName))
         fileStatus.done()
     print(fileStatus)
