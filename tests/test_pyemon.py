@@ -35,6 +35,10 @@ def test_pyemon():
   assert(path.exists() == False)
   path.makedirs()
 
+  assert(Path.from_file_path("file.ext").to_module_name() == "file")
+  assert(Path.from_file_path("directory/file.ext").to_module_name() == "directory.file")
+  assert(Path.from_file_path("./directory/file.ext").to_module_name() == "directory.file")
+
   Task.parse(["pyemon.test", "テスト"])
   Time.cycle_sleep(0.9, 1.0)
 

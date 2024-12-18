@@ -19,6 +19,7 @@ Make your python work easier
 
 |Version|Summary|
 |:--|:--|
+|0.1.7|Update Path|
 |0.1.6|Refactoring|
 |0.1.4|Refactoring|
 |0.1.3|Release pyemon|

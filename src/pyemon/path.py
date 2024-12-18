@@ -1,4 +1,5 @@
 import os
+from .directory import *
 
 class Path:
   def __init__(self, directory = "", file = "", ext = ""):
@@ -12,6 +13,12 @@ class Path:
   def makedirs(self):
     if 0 < len(self.Directory):
       os.makedirs(self.Directory, exist_ok = True)
+
+  def to_module_name(self):
+    names = list(filter(lambda name: name != ".", Directory.split(self.Directory)))
+    if 0 < len(self.File):
+      names.append(self.File)
+    return ".".join(names)
 
   def to_string(self):
     return Path.join(self.File, self.Ext, self.Directory)
@@ -36,3 +43,7 @@ class Path:
     if 0 < len(directory):
       path = """{}/{}""".format(directory, path)
     return path
+
+  @classmethod
+  def from_file_path(self, filePath):
+    return Path(*Path.split(filePath))
