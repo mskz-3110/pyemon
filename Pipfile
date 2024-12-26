@@ -5,6 +5,7 @@ name = "pypi"
 
 [packages]
 inflection = "*"
+pyyaml = "*"
 
 [dev-packages]
 pytest = "*"

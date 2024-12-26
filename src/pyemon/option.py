@@ -55,6 +55,12 @@ class OptionParser:
       return self.__Options[longName]
     return None
 
+  def find_option(self, name):
+    if len(name) == 1:
+      return self.find_option_from_short_name(name)
+    else:
+      return self.find_option_from_long_name(name)
+
   def parse(self, argv):
     argc = len(argv)
     argi = 0
@@ -64,36 +70,26 @@ class OptionParser:
       arg = List.get(argv, argi)
       if 2 <= len(arg):
         if arg[0] == "-":
+          option = key = value = None
           if arg[1] == "-":
             splitedArg = arg[2:].split("=")
-            option = self.find_option_from_long_name(splitedArg[0])
-            if option is not None and option in parsedOptions:
-              option = None
-            if option is None:
-              newArgv.append(arg)
-            else:
-              parsedOptions.append(option)
-              if option.DefaultValue is None:
-                option.Value = True
-              elif len(splitedArg) == 1:
-                argi += 1
-                option.Value = List.get(argv, argi)
-              else:
-                splitedArg.pop(0)
-                option.Value = "=".join(splitedArg)
           else:
-            option = self.find_option_from_short_name(arg[1:])
-            if option is not None and option in parsedOptions:
-              option = None
-            if option is None:
-              newArgv.append(arg)
+            splitedArg = arg[1:].split("=")
+          key = splitedArg.pop(0)
+          if 0 < len(splitedArg):
+            value = "=".join(splitedArg)
+          option = self.find_option(key)
+          if option is None:
+            newArgv.append(arg)
+          else:
+            parsedOptions.append(option)
+            if option.DefaultValue is None:
+              option.Value = True
+            elif value is None:
+              argi += 1
+              option.Value = List.get(argv, argi, option.DefaultValue)
             else:
-              parsedOptions.append(option)
-              if option.DefaultValue is None:
-                option.Value = True
-              else:
-                argi += 1
-                option.Value = List.get(argv, argi)
+              option.Value = value
         else:
           newArgv.append(arg)
       else:

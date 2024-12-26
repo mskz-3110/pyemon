@@ -1,12 +1,9 @@
-import os
+from .string import *
 
-class FileStatus:
-  def __init__(self, path, status = "skip"):
-    self.Path = path
+class Status:
+  def __init__(self, name, status = "skip"):
+    self.Name = name
     self.Status = status
-
-  def exists(self):
-    return os.path.isfile(self.Path)
 
   def skip(self):
     self.Status = "skip"
@@ -15,7 +12,7 @@ class FileStatus:
     self.Status = "done"
 
   def to_string(self):
-    return """\033[40m\033[36m{}\033[0m is {}.""".format(self.Path, self.Status)
+    return """{} is {}.""".format(String.console_string(self.Name, "cyan"), self.Status)
 
   def __str__(self):
     return self.to_string()

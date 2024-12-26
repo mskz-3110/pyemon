@@ -1,6 +1,6 @@
 from .option import *
 from .command import *
-from .string import *
+from .status import *
 import sys
 import inflection
 import copy
@@ -22,6 +22,16 @@ class Task:
 
   def run(self, argv):
     pass
+
+  def copy(self, srcDir, dstDir, fileName):
+    Command.copy(os.path.join(srcDir, fileName), dstDir)
+    print(Status(os.path.relpath(os.path.join(dstDir, fileName)), "done"))
+
+  def copy_if_not_exists(self, srcDir, dstDir, fileName):
+    status = Status(os.path.relpath(os.path.join(dstDir, fileName)))
+    if Command.copy_if_not_exists(os.path.join(srcDir, fileName), dstDir):
+      status.done()
+    print(status)
 
   def to_string(self, indent = ""):
     strings = []
@@ -69,7 +79,7 @@ class Task:
         task.run(newArgv)
         Task.set(task)
       else:
-        sys.exit(String.to_undefined_string(name))
+        sys.exit(String.undefined_string(name))
 
   @classmethod
   def parse_if_main(cls, name, task = None):
@@ -99,7 +109,7 @@ class HelpTask(Task):
         for name in argv:
           task = Task.get(name)
           if task is None:
-            strings.append("""  {}""".format(String.to_undefined_string(name)))
+            strings.append("""  {}""".format(String.undefined_string(name)))
           else:
             strings.append(task.to_string("  "))
           strings.append("")

@@ -3,10 +3,10 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "pyemon"
-version = "0.2.1"
-authors = [{name = "mskz-3110", email = "mskz.saito@gmail.com"}]
-description = "Python auxiliary tools"
+name = "{projectName}"
+version = "0.0.1"
+authors = [{{name = "{userName}", email = "{email}"}}]
+description = "{description}"
 readme = "README.md"
 requires-python = ">=3.13"
 classifiers = [
@@ -14,17 +14,14 @@ classifiers = [
   "License :: OSI Approved :: MIT License",
   "Operating System :: OS Independent",
 ]
-dependencies = [
-  "pyyaml",
-  "inflection",
-]
+dependencies = []
 
-[project.scripts]
-pyemon = "pyemon.cli:main"
+#[project.scripts]
+#{projectName} = "{projectName}.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/mskz-3110/pyemon"
-Issues = "https://github.com/mskz-3110/pyemon/issues"
+Homepage = "https://github.com/{userName}/{projectName}"
+Issues = "https://github.com/{userName}/{projectName}/issues"
 
 [tool.pytest.ini_options]
 pythonpath = "src"

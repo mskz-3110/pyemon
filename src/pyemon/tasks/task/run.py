@@ -31,7 +31,7 @@ class TaskRunTask(Task):
           if name in tasks:
             strings.append(tasks[name].to_string("  "))
           else:
-            strings.append("""  {}""".format(String.to_undefined_string(name)))
+            strings.append("""  {}""".format(String.undefined_string(name)))
           strings.append("")
       sys.exit("\n".join(strings))
     else:
@@ -39,5 +39,5 @@ class TaskRunTask(Task):
       if name in tasks:
         tasks[name].run(argv)
       else:
-        sys.exit(String.to_undefined_string(name))
+        sys.exit(String.undefined_string(name))
 Task.parse_if_main(__name__, TaskRunTask("<task name> <task args>"))

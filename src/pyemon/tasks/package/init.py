@@ -1,13 +1,14 @@
 from ...task import *
 from ...status import *
+from ...path import *
 
 class PackageInitTask(Task):
   def __init__(self, *args, **kwargs):
     super().__init__(*args, **kwargs)
     self.OptionParser = OptionParser([
-      Option("u", "user-name", "{USERNAME}", "User name"),
-      Option("e", "email", "{EMAIL}", "Email"),
-      Option("description", "description", "{DESCRIPTION}", "Description"),
+      Option("u", "user-name", "", "User name"),
+      Option("e", "email", "", "Email"),
+      Option("description", "description", "", "Description"),
       Option("p", "project-name", "", "Project name")
     ])
 
@@ -17,87 +18,42 @@ class PackageInitTask(Task):
     email = self.OptionParser.find_option_from_long_name("email").Value
     description = self.OptionParser.find_option_from_long_name("description").Value
     projectName = self.OptionParser.find_option_from_long_name("project-name").value_if_not(os.path.basename(os.getcwd()))
+    srcRootDir = os.path.abspath("""{}/../../scripts""".format(os.path.dirname(__file__)))
 
-    fileStatus = FileStatus(".gitignore")
-    if not fileStatus.exists():
-      with open(fileStatus.Path, "w", newline = "\n") as file:
-        file.write("/dist\n")
-        file.write("*.egg-info\n")
-        file.write("__pycache__\n")
-        fileStatus.done()
-    print(fileStatus)
+    for baseName in [".gitignore", "MANIFEST.in", "setup.py"]:
+      self.copy_if_not_exists(srcRootDir, ".", baseName)
 
-    fileStatus = FileStatus("MANIFEST.in")
-    if not fileStatus.exists():
-      with open(fileStatus.Path, "w", newline = "\n") as file:
-        file.write("recursive-exclude tests *.py\n")
-        fileStatus.done()
-    print(fileStatus)
+    if len(projectName) == 0 or len(email) == 0 or len(description) == 0:
+      return
 
-    fileStatus = FileStatus("README.md")
-    if not fileStatus.exists():
-      with open(fileStatus.Path, "w", newline = "\n") as file:
-        file.write("""# {}\n""".format(projectName))
-        if description is not "{DESCRIPTION}":
-          file.write("""{}\n""".format(description))
-        fileStatus.done()
-    print(fileStatus)
+    baseName = "README.md"
+    dst = baseName
+    status = Status(os.path.relpath(dst))
+    if not Command.exists(dst):
+      Command.file_write(dst, Command.file_read(os.path.join(srcRootDir, baseName)).format(projectName = projectName, description = description))
+      status.done()
+    print(status)
 
-    fileStatus = FileStatus("setup.py")
-    if not fileStatus.exists():
-      with open(fileStatus.Path, "w", newline = "\n") as file:
-        file.write("from setuptools import setup\n")
-        file.write("setup()\n")
-        fileStatus.done()
-    print(fileStatus)
+    baseName = "pyproject.toml"
+    dst = baseName
+    status = Status(dst)
+    if not Command.exists(dst):
+      Command.file_write(dst, Command.file_read(os.path.join(srcRootDir, baseName)).format(userName = userName, email = email, description = description, projectName = projectName))
+      status.done()
+    print(status)
 
-    directoryPath = """src/{}""".format(projectName)
-    os.makedirs(directoryPath, exist_ok = True)
-
-    os.makedirs("tests", exist_ok = True)
-    fileStatus = FileStatus("""tests/test_{}.py""".format(projectName))
-    if not fileStatus.exists():
-      with open(fileStatus.Path, "w", newline = "\n") as file:
-        file.write("""import {}\n\n""".format(projectName))
-        file.write("""def test_{}():\n""".format(projectName))
-        file.write("""  print("TODO: test_{}()")\n""".format(projectName))
-        fileStatus.done()
-    print(fileStatus)
-
-    fileStatus = FileStatus("pyproject.toml")
-    if not fileStatus.exists():
-      with open(fileStatus.Path, "w", newline = "\n") as file:
-        file.write("""[build-system]
-requires = ["setuptools>=61.0"]
-build-backend = "setuptools.build_meta"
-
-[project]
-name = "{projectName}"
-version = "0.0.1"
-authors = [{{name = "{userName}", email = "{email}"}}]
-description = "{description}"
-readme = "README.md"
-requires-python = ">=3.13"
-classifiers = [
-  "Programming Language :: Python :: 3",
-  "License :: OSI Approved :: MIT License",
-  "Operating System :: OS Independent",
-]
-dependencies = []
-
-#[project.scripts]
-#{projectName} = "{projectName}.cli:main"
-
-[project.urls]
-Homepage = "https://github.com/{userName}/{projectName}"
-Issues = "https://github.com/{userName}/{projectName}/issues"
-
-[tool.pytest.ini_options]
-pythonpath = "src"
-testpaths = ["tests"]
-""".format(userName = userName, email = email, description = description, projectName = projectName))
-        fileStatus.done()
-    print(fileStatus)
+    Command.mkdir(os.path.join("src", projectName))
+    dirName = "tests"
+    Command.mkdir(dirName)
+    baseName = "test.py"
+    path = Path.from_file_path(os.path.join(dirName, baseName))
+    path.File = """{}_{}""".format(path.File, projectName)
+    dst = path.to_string()
+    status = Status(dst)
+    if not Command.exists(dst):
+      Command.file_write(dst, Command.file_read(os.path.join(srcRootDir, dirName, baseName)).format(projectName = projectName))
+      status.done()
+    print(status)
 
     if not os.path.isfile("Pipfile"):
       Command(["pipenv", "--python", str(sys.version_info[0])]).run()
