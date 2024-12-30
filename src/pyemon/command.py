@@ -5,6 +5,7 @@ import sys
 import shutil
 import glob
 import yaml
+import json
 from .string import *
 
 class Command:
@@ -102,10 +103,22 @@ class Command:
     return {}
 
   @classmethod
-  def yaml_save(cls, filePath, data):
+  def yaml_save(cls, filePath, data, **kwargs):
     Command.mkdir(os.path.dirname(filePath))
     with open(filePath, "w", encoding = "utf-8", newline = "\n") as file:
-      yaml.dump(data, file, sort_keys = False, default_flow_style = False, allow_unicode = True)
+      yaml.dump(data, file, **(dict(sort_keys = False, default_flow_style = False, allow_unicode = True) | kwargs))
+
+  @classmethod
+  def json_load(cls, filePath):
+    with open(filePath, "r", encoding = "utf-8") as file:
+      return json.load(file)
+    return {}
+
+  @classmethod
+  def json_save(cls, filePath, data, **kwargs):
+    Command.mkdir(os.path.dirname(filePath))
+    with open(filePath, "w", encoding = "utf-8", newline = "\n") as file:
+      json.dump(data, file, **(dict(indent = 2) | kwargs))
 
   @classmethod
   def file_read(cls, filePath):
